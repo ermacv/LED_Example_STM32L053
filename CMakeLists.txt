@@ -22,11 +22,5 @@ include(${PROJECT_SOURCE_DIR}/cmake/build_common/build_options.cmake)
 add_subdirectory(${PROJECT_SOURCE_DIR}/cmake/libs/cmsis)
 add_subdirectory(${PROJECT_SOURCE_DIR}/cmake/libs/stm32_ll)
 add_subdirectory(${PROJECT_SOURCE_DIR}/modules/system)
-###############################################################################
-add_executable(${CMAKE_PROJECT_NAME})
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/modules/application/src/main.c)
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/modules/application/src/stm32l0xx_it.c)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/modules/application/inc)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE STM32_LL)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE CMSIS_STM32L053)
+add_subdirectory(${PROJECT_SOURCE_DIR}/modules/application)
 ###############################################################################
