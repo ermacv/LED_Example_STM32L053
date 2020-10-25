@@ -23,4 +23,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/cmake/libs/cmsis)
 add_subdirectory(${CMAKE_SOURCE_DIR}/cmake/libs/stm32_ll)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/system)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/application)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/pwm_timer)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/counter_timer)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/main)
 ###############################################################################
