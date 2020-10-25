@@ -14,6 +14,8 @@ typedef enum
   kLED_CONTROL_NUM_3
 } led_control_t;
 
+void led_control_init(void);
+void led_control_deinit(void);
 void led_control_start(led_control_t led_num);
 void led_control_stop(void);
 void led_control_process(void);

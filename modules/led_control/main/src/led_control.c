@@ -1,5 +1,6 @@
 #include <stddef.h>
 
+#include "led_control_conf.h"
 #include "led_control.h"
 #include "pwm_timer.h"
 #include "counter_timer.h"
@@ -11,43 +12,161 @@
 #define kTIMER_EDGES_PRESCALER (479)
 #define kTIMER_STABLE_PRESCALER (47999)
 
-typedef enum
+typedef enum led_control_rc_
+{
+  kLED_CONTROL_IDLE,
+  kLED_CONTROL_PROCESS,
+} led_control_state_t;
+
+typedef enum led_control_state_
 {
   kLED_CONTROL_RC_OK,
   kLED_CONTROL_RC_ERR,
-}led_control_rc_t;
+} led_control_rc_t;
+
+static volatile char dma_tc_int = 0;
+static volatile char tim16_tc_int = 0;
+static led_control_state_t state = kLED_CONTROL_IDLE;
+static uint8_t led_process_mode_counter = 0;
+led_desc_t led_desc;
+static char dma_buf[kDMA_BUF_SIZE];
+
+static led_control_rc_t led_control_prepare_data(char *buf, size_t buf_size, size_t max_points);
+static led_control_rc_t led_control_calc_preset_data(led_cfg_t *led_cfg, led_desc_t *led_desc);
+static void led_control_process_led(void);
+
+    void DMA_TC_callback(void)
+{
+  dma_tc_int = 1;
+}
+
+void TMR_TC_callback(void)
+{
+  tim16_tc_int = 1;
+}
+
+void led_control_init(void)
+{
+  pwm_timer_init();
+}
+
+void led_control_deinit(void)
+{
+  // Not implemented
+}
 
 void led_control_start(led_control_t led_num)
 {
+  uint16_t t1, t2, t3;
+  uint8_t max_brightness;
+
   switch (led_num)
   {
   case kLED_CONTROL_NUM_1:
-    /* code */
+    t1 = kLED_MODE_1_T1;
+    t2 = kLED_MODE_1_T2;
+    t3 = kLED_MODE_1_T3;
+    max_brightness = kLED_MODE_1_MAX_BRIGHTNESS;
     break;
 
   case kLED_CONTROL_NUM_2:
-    /* code */
+    t1 = kLED_MODE_2_T1;
+    t2 = kLED_MODE_2_T2;
+    t3 = kLED_MODE_2_T3;
+    max_brightness = kLED_MODE_2_MAX_BRIGHTNESS;
     break;
 
   case kLED_CONTROL_NUM_3:
-    /* code */
+    t1 = kLED_MODE_3_T1;
+    t2 = kLED_MODE_3_T2;
+    t3 = kLED_MODE_3_T3;
+    max_brightness = kLED_MODE_3_MAX_BRIGHTNESS;
     break;
 
   default:
   led_control_stop();
-    break;
+    return;
+    // break;
   }
 
+  led_cfg_t led_cfg =
+  {
+    .data_buf = dma_buf,
+    .data_buf_size = kDMA_BUF_SIZE,
+    .max_brightness_pct = max_brightness,
+    .t1_ms = t1,
+    .t2_ms = t2,
+    .t3_ms = t3
+  };
+
+  led_control_rc_t rc = led_control_calc_preset_data(&led_cfg, &led_desc);
+
+  if (kLED_CONTROL_RC_OK == rc)
+  {
+    led_process_mode_counter = 0;
+    state = kLED_CONTROL_PROCESS;
+  }
 }
 
 void led_control_stop(void)
 {
-
+  state = kLED_CONTROL_IDLE;
+  counter_timer_stop_led();
 }
 
 void led_control_process(void)
 {
+  if (kLED_CONTROL_IDLE != state)
+  {
+    led_control_process_led();
+  }
+}
 
+static void led_control_process_led(void)
+{
+  static size_t led_process_mode_counter = 0;
+
+  switch (led_process_mode_counter)
+  {
+  case 0:
+    if (tim16_tc_int)
+    {
+      tim16_tc_int = 0;
+      counter_timer_load_edge(&led_desc.rising);
+      led_process_mode_counter++;
+    }
+    break;
+
+  case 1:
+    if (dma_tc_int)
+    {
+      dma_tc_int = 0;
+      counter_timer_load_stable(&led_desc.stable);
+      led_process_mode_counter++;
+    }
+    break;
+
+  case 2:
+    if (tim16_tc_int)
+    {
+      tim16_tc_int = 0;
+      counter_timer_load_edge(&led_desc.falling);
+      led_process_mode_counter++;
+    }
+    break;
+
+  case 3:
+    if (dma_tc_int)
+    {
+      dma_tc_int = 0;
+      counter_timer_load_stable(&led_desc.stable);
+      led_process_mode_counter = 0;
+    }
+    break;
+
+  default:
+    break;
+  }
 }
 
 static led_control_rc_t led_control_prepare_data(char *buf, size_t buf_size, size_t max_points)
@@ -83,7 +202,7 @@ static led_control_rc_t led_control_calc_preset_data(led_cfg_t *led_cfg, led_des
     return kLED_CONTROL_RC_ERR;
   }
 
-  led_control_rc_t rc = prepare_data(led_cfg->data_buf, led_cfg->data_buf_size, led_cfg->max_brightness_pct);
+  led_control_rc_t rc = led_control_prepare_data(led_cfg->data_buf, led_cfg->data_buf_size, led_cfg->max_brightness_pct);
 
   if (kLED_CONTROL_RC_OK != rc)
   {
