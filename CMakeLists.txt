@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.6)
 ###############################################################################
 # CMake specific options that should be enabled before processing the project
 # Must be enabled before project()
-set(CMAKE_TOOLCHAIN_FILE ${PROJECT_SOURCE_DIR}/cmake/toolchain/GNU_Arm_Embedded_Toolchain.cmake)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/toolchain/GNU_Arm_Embedded_Toolchain.cmake)
 ###############################################################################
 # Languages that are used in the project
 enable_language(C)
@@ -13,14 +13,14 @@ enable_language(C)
 project(Woodenshark_Test)
 ###############################################################################
 # Include CPU specific biuld options
-include(${PROJECT_SOURCE_DIR}/cmake/cpu/arm_cortex_m0plus_gcc.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/cpu/arm_cortex_m0plus_gcc.cmake)
 # Include build options for different build types (Debug, Release, etc.)
-include(${PROJECT_SOURCE_DIR}/cmake/build_common/build_types.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/build_common/build_types.cmake)
 # Include common build options that should ne used by all project modules and libraries
-include(${PROJECT_SOURCE_DIR}/cmake/build_common/build_options.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/build_common/build_options.cmake)
 ###############################################################################
-add_subdirectory(${PROJECT_SOURCE_DIR}/cmake/libs/cmsis)
-add_subdirectory(${PROJECT_SOURCE_DIR}/cmake/libs/stm32_ll)
-add_subdirectory(${PROJECT_SOURCE_DIR}/modules/system)
-add_subdirectory(${PROJECT_SOURCE_DIR}/modules/application)
+add_subdirectory(${CMAKE_SOURCE_DIR}/cmake/libs/cmsis)
+add_subdirectory(${CMAKE_SOURCE_DIR}/cmake/libs/stm32_ll)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/system)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/application)
 ###############################################################################
