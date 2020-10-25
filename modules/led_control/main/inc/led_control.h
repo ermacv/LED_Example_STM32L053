@@ -10,8 +10,10 @@
 typedef enum
 {
   kLED_CONTROL_NUM_1,
+  kLED_CONTROL_FIRST = kLED_CONTROL_NUM_1,
   kLED_CONTROL_NUM_2,
-  kLED_CONTROL_NUM_3
+  kLED_CONTROL_NUM_3,
+  kLED_CONTROL_NUM_LAST = kLED_CONTROL_NUM_3
 } led_control_t;
 
 void led_control_init(void);
