@@ -26,5 +26,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/modules/application)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/pwm_timer)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/counter_timer)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/led_control/main)
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/button_control)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/button_control/main)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/button_control/button_driver)
 ###############################################################################
