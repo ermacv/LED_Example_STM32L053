@@ -35,7 +35,7 @@ static led_control_rc_t led_control_prepare_data(char *buf, size_t buf_size, siz
 static led_control_rc_t led_control_calc_preset_data(led_cfg_t *led_cfg, led_desc_t *led_desc);
 static void led_control_process_led(void);
 
-    void DMA_TC_callback(void)
+void DMA_TC_callback(void)
 {
   dma_tc_int = 1;
 }
