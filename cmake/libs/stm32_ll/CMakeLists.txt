@@ -34,6 +34,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     # ${CMAKE_SOURCE_DIR}/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usb.c
     ${CMAKE_SOURCE_DIR}/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_utils.c
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE CMSIS_STM32L053)
+target_link_libraries(${PROJECT_NAME} PUBLIC CMSIS_STM32L053)
 
 ###############################################################################
