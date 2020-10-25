@@ -23,6 +23,7 @@
 #include "stm32l0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "led_control_it.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,7 +146,11 @@ void SysTick_Handler(void)
 void DMA1_Channel2_3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
-
+  if (LL_DMA_IsActiveFlag_TC2(DMA1))
+  {
+    LL_DMA_ClearFlag_TC2(DMA1);
+    DMA_TC_callback();
+  }
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
 
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
@@ -159,7 +164,11 @@ void DMA1_Channel2_3_IRQHandler(void)
 void TIM6_DAC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
+  if (LL_TIM_IsActiveFlag_UPDATE(TIM6))
+  {
+    LL_TIM_ClearFlag_UPDATE(TIM6);
+    TMR_TC_callback();
+  }
   /* USER CODE END TIM6_DAC_IRQn 0 */
 
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
