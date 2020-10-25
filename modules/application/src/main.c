@@ -99,6 +99,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   button_control_init();
   led_control_init();
+  LL_SYSTICK_EnableIT();
   /* USER CODE END 2 */
 
   /* Infinite loop */
